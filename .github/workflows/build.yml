@@ -1,0 +1,171 @@
+name: Build Auto Capture CLI
+
+on:
+  push:
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.11']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r build_requirements.txt
+
+    - name: Install system dependencies (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-tk x11-apps libx11-dev libxext-dev
+
+    - name: Build with PyInstaller
+      run: |
+        pyinstaller auto-capture.spec
+
+    - name: Test executable (Linux/macOS)
+      if: runner.os != 'Windows'
+      run: |
+        chmod +x dist/auto-capture
+        ./dist/auto-capture --help
+
+    - name: Test executable (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        dist\auto-capture.exe --help
+
+    - name: Create archive (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        cd dist
+        tar -czf ../auto-capture-linux-x64.tar.gz auto-capture
+        cd ..
+
+    - name: Create archive (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        cd dist
+        tar -czf ../auto-capture-macos-x64.tar.gz auto-capture
+        cd ..
+
+    - name: Create archive (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        cd dist
+        7z a ../auto-capture-windows-x64.zip auto-capture.exe
+        cd ..
+
+    - name: Upload Linux artifact
+      if: runner.os == 'Linux'
+      uses: actions/upload-artifact@v3
+      with:
+        name: auto-capture-linux-x64
+        path: auto-capture-linux-x64.tar.gz
+
+    - name: Upload macOS artifact
+      if: runner.os == 'macOS'
+      uses: actions/upload-artifact@v3
+      with:
+        name: auto-capture-macos-x64
+        path: auto-capture-macos-x64.tar.gz
+
+    - name: Upload Windows artifact
+      if: runner.os == 'Windows'
+      uses: actions/upload-artifact@v3
+      with:
+        name: auto-capture-windows-x64
+        path: auto-capture-windows-x64.zip
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Auto Capture CLI ${{ github.ref }}
+        body: |
+          ## Auto Capture CLI Release
+          
+          ### 新機能
+          - 任意のウィンドウ画面の任意の範囲をキャプチャ
+          - 指定した間隔での連続キャプチャ
+          - クロスプラットフォーム対応
+          
+          ### ダウンロード
+          - **Linux**: auto-capture-linux-x64.tar.gz
+          - **macOS**: auto-capture-macos-x64.tar.gz  
+          - **Windows**: auto-capture-windows-x64.zip
+          
+          ### 使用方法
+          ```bash
+          # ヘルプを表示
+          ./auto-capture --help
+          
+          # 基本的なキャプチャ
+          ./auto-capture --fps 5 --duration 30
+          ```
+          
+          詳細な使用方法は README.md を参照してください。
+        draft: false
+        prerelease: false
+
+    - name: Upload Linux Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./auto-capture-linux-x64/auto-capture-linux-x64.tar.gz
+        asset_name: auto-capture-linux-x64.tar.gz
+        asset_content_type: application/gzip
+
+    - name: Upload macOS Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./auto-capture-macos-x64/auto-capture-macos-x64.tar.gz
+        asset_name: auto-capture-macos-x64.tar.gz
+        asset_content_type: application/gzip
+
+    - name: Upload Windows Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./auto-capture-windows-x64/auto-capture-windows-x64.zip
+        asset_name: auto-capture-windows-x64.zip
+        asset_content_type: application/zip

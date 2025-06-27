@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  auto-capture:
+    build: .
+    container_name: auto-capture-py
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./captures:/app/captures
+      - .:/app
+    network_mode: host
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+    
+  # 実行用サービス（ヘルプ表示）
+  help:
+    build: .
+    container_name: auto-capture-help
+    command: python main.py --help
+    
+  # 単一フレームキャプチャ用サービス
+  single-capture:
+    build: .
+    container_name: auto-capture-single
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./captures:/app/captures
+    network_mode: host
+    stdin_open: true
+    tty: true
+    command: python main.py --single --output-prefix captures/screenshot
+    
+  # 仮想ディスプレイ使用サービス
+  capture-headless:
+    build: .
+    container_name: auto-capture-headless
+    volumes:
+      - ./captures:/app/captures
+    stdin_open: true
+    tty: true
+    command: ./start_capture.sh --no-gui --single --output-prefix captures/headless_screenshot
