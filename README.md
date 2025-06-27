@@ -1,97 +1,97 @@
 # Auto Capture CLI
 
-任意のウィンドウ画面の任意の範囲、任意の時間、任意の間隔で画面キャプチャができるPythonコマンドラインツールです。
+A Python command-line tool for capturing screenshots of any window area at specified intervals and durations.
 
-## 📁 プロジェクト構造
+## 📁 Project Structure
 
 ```
 auto-capture-py/
-├── src/                    # ソースコード
-│   ├── main.py            # メインスクリプト
-│   ├── area_selector.py   # 範囲選択GUI
-│   └── window_selector.py # ウィンドウ選択GUI
-├── docs/                  # ドキュメント
-│   ├── README.md          # このファイル
-│   ├── LOCAL_SETUP.md     # ローカル環境セットアップガイド
-│   ├── BUILD_GUIDE.md     # ビルドガイド
-│   ├── TEST_GUIDE.md      # テストガイド
-│   └── LICENSE            # ライセンス
-├── scripts/               # スクリプト
-│   ├── start_capture.sh   # Docker用起動スクリプト
-│   └── test_cli.sh        # 自動テストスクリプト
-├── build_tools/           # ビルド関連
-│   ├── build.sh           # Unix/Linux用ビルドスクリプト
-│   ├── build.bat          # Windows用ビルドスクリプト
-│   ├── auto-capture.spec  # PyInstaller設定
-│   ├── setup.py           # Python setuptools設定
-│   └── build_requirements.txt # ビルド用依存関係
-├── tests/                 # テストファイル（将来用）
-├── captures/              # キャプチャ画像保存先
-├── dist/                  # ビルド済み実行ファイル
+├── src/                    # Source code
+│   ├── main.py            # Main script
+│   ├── area_selector.py   # Area selection GUI
+│   └── window_selector.py # Window selection GUI
+├── docs/                  # Documentation
+│   ├── README.md          # This file
+│   ├── LOCAL_SETUP.md     # Local environment setup guide
+│   ├── BUILD_GUIDE.md     # Build guide
+│   ├── TEST_GUIDE.md      # Testing guide
+│   └── LICENSE            # License
+├── scripts/               # Scripts
+│   ├── start_capture.sh   # Docker startup script
+│   └── test_cli.sh        # Automated test script
+├── build_tools/           # Build tools
+│   ├── build.sh           # Unix/Linux build script
+│   ├── build.bat          # Windows build script
+│   ├── auto-capture.spec  # PyInstaller configuration
+│   ├── setup.py           # Python setuptools configuration
+│   └── build_requirements.txt # Build dependencies
+├── tests/                 # Test files (future use)
+├── captures/              # Screenshot output directory
+├── dist/                  # Built executable files
 ├── .github/workflows/     # GitHub Actions CI/CD
-├── requirements.txt       # 実行時依存関係
-├── Dockerfile            # Docker設定
-└── docker-compose.yml    # Docker Compose設定
+├── requirements.txt       # Runtime dependencies
+├── Dockerfile            # Docker configuration
+└── docker-compose.yml    # Docker Compose configuration
 ```
 
-## 🚀 クイックスタート
+## 🚀 Quick Start
 
-### 1. 実行ファイルを使用（推奨）
+### 1. Using Pre-built Executable (Recommended)
 
-最新のリリースから実行ファイルをダウンロード：
+Download the latest executable from releases:
 
 ```bash
-# ヘルプを表示
+# Show help
 ./auto-capture --help
 
-# 基本的なキャプチャ（5fps、30秒間）
+# Basic capture (5fps for 30 seconds)
 ./auto-capture --fps 5 --duration 30
 
-# 単一フレームキャプチャ
+# Single frame capture
 ./auto-capture --single
 
-# 範囲指定キャプチャ
+# Area-specific capture
 ./auto-capture --area 100,100,800,600 --fps 2 --duration 10
 ```
 
-### 2. Pythonスクリプトとして実行
+### 2. Running as Python Script
 
 ```bash
-# 依存関係をインストール
+# Install dependencies
 pip install -r requirements.txt
 
-# 実行
+# Run
 python src/main.py --fps 5 --duration 30
 ```
 
-### 3. Dockerを使用
+### 3. Using Docker
 
 ```bash
-# ヘルプを表示
+# Show help
 docker-compose run help
 
-# 単一フレームキャプチャ
+# Single frame capture
 docker-compose run single-capture
 ```
 
-## 📖 詳細ドキュメント
+## 📖 Detailed Documentation
 
-- **[ローカル環境セットアップ](docs/LOCAL_SETUP.md)** - 開発環境の構築方法
-- **[ビルドガイド](docs/BUILD_GUIDE.md)** - 実行ファイルの作成方法
-- **[テストガイド](docs/TEST_GUIDE.md)** - テスト方法と品質保証
+- **[Local Environment Setup](docs/LOCAL_SETUP.md)** - Development environment setup
+- **[Build Guide](docs/BUILD_GUIDE.md)** - How to create executable files
+- **[Testing Guide](docs/TEST_GUIDE.md)** - Testing methods and quality assurance
 
-## ⚡ 主な機能
+## ⚡ Key Features
 
-- **ウィンドウ選択**: 特定のアプリケーションウィンドウを選択
-- **範囲選択**: マウスドラッグで任意の範囲を指定
-- **連続キャプチャ**: 指定したFPSで連続撮影
-- **単一フレーム**: 1枚だけのスクリーンショット
-- **クロスプラットフォーム**: Windows、macOS、Linux対応
-- **GUI/CLI両対応**: GUIモードとコマンドラインモード
+- **Window Selection**: Select specific application windows
+- **Area Selection**: Specify any area with mouse drag
+- **Continuous Capture**: Record at specified FPS
+- **Single Frame**: Take one screenshot
+- **Cross-platform**: Windows, macOS, Linux support
+- **GUI/CLI Support**: Both GUI mode and command-line mode
 
-## 🛠️ 開発者向け
+## 🛠️ For Developers
 
-### ビルド
+### Build
 
 ```bash
 # Unix/Linux/macOS
@@ -101,92 +101,92 @@ docker-compose run single-capture
 build_tools\build.bat
 ```
 
-### テスト
+### Testing
 
 ```bash
-# 自動テスト実行
+# Run automated tests
 ./scripts/test_cli.sh
 
-# 手動テスト
+# Manual testing
 python src/main.py --no-gui --single --output-prefix test
 ```
 
-### Docker開発環境
+### Docker Development Environment
 
 ```bash
-# 開発用コンテナ起動
+# Start development container
 docker-compose run auto-capture
 
-# 仮想ディスプレイでテスト
+# Test with virtual display
 docker-compose run capture-headless
 ```
 
-## 📋 使用例
+## 📋 Usage Examples
 
-### 基本的な使用方法
+### Basic Usage
 
 ```bash
-# 5fps で 30秒間キャプチャ
+# Capture at 5fps for 30 seconds
 ./auto-capture --fps 5 --duration 30
 
-# 特定の範囲を 2fps で 10秒間
+# Specific area at 2fps for 10 seconds
 ./auto-capture --area 100,100,800,600 --fps 2 --duration 10
 
-# 単一フレームキャプチャ
+# Single frame capture
 ./auto-capture --single
 
-# GUIなしモード（全画面）
+# No-GUI mode (full screen)
 ./auto-capture --no-gui --fps 1 --duration 60
 ```
 
-### 高度な使用方法
+### Advanced Usage
 
 ```bash
-# カスタムファイル名プレフィックス
+# Custom filename prefix
 ./auto-capture --fps 5 --duration 30 --output-prefix my_capture
 
-# 高頻度キャプチャ
+# High-frequency capture
 ./auto-capture --fps 30 --duration 5
 
-# 長時間低頻度キャプチャ
-./auto-capture --fps 0.5 --duration 3600  # 1時間、2秒に1回
+# Long-duration low-frequency capture
+./auto-capture --fps 0.5 --duration 3600  # 1 hour, once every 2 seconds
 ```
 
-## 🔧 システム要件
+## 🔧 System Requirements
 
-- **Python**: 3.11以上
-- **OS**: Windows 10+、macOS 10.14+、Ubuntu 18.04+
-- **メモリ**: 最低512MB、推奨1GB以上
-- **ディスク**: 100MB以上の空き容量
+- **Python**: 3.11 or higher
+- **OS**: Windows 10+, macOS 10.14+, Ubuntu 18.04+
+- **Memory**: Minimum 512MB, recommended 1GB+
+- **Disk**: 100MB+ free space
 
-### 必要な権限
+### Required Permissions
 
-- **macOS**: 画面収録権限、アクセシビリティ権限
-- **Windows**: 管理者権限（初回実行時）
-- **Linux**: X11アクセス権限
+- **macOS**: Screen recording permission, accessibility permission
+- **Windows**: Administrator privileges (first run)
+- **Linux**: X11 access permissions
 
-## 🤝 コントリビューション
+## 🤝 Contributing
 
-1. このリポジトリをフォーク
-2. 機能ブランチを作成 (`git checkout -b feature/amazing-feature`)
-3. 変更をコミット (`git commit -m 'Add amazing feature'`)
-4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
-5. プルリクエストを作成
+1. Fork this repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Create a Pull Request
 
-## 📄 ライセンス
+## 📄 License
 
-このプロジェクトはMITライセンスの下で公開されています。詳細は [LICENSE](docs/LICENSE) ファイルを参照してください。
+This project is licensed under the MIT License. See the [LICENSE](docs/LICENSE) file for details.
 
-## 🐛 バグレポート・機能要望
+## 🐛 Bug Reports & Feature Requests
 
-[GitHub Issues](https://github.com/your-username/auto-capture-py/issues) でバグレポートや機能要望をお寄せください。
+Please submit bug reports and feature requests via [GitHub Issues](https://github.com/your-username/auto-capture-py/issues).
 
-## 📞 サポート
+## 📞 Support
 
-- **ドキュメント**: [docs/](docs/) フォルダ内の各種ガイド
-- **テスト**: `./scripts/test_cli.sh` で動作確認
-- **トラブルシューティング**: [TEST_GUIDE.md](docs/TEST_GUIDE.md#トラブルシューティング)
+- **Documentation**: Various guides in the [docs/](docs/) folder
+- **Testing**: Run `./scripts/test_cli.sh` to verify functionality
+- **Troubleshooting**: See [TEST_GUIDE.md](docs/TEST_GUIDE.md#troubleshooting)
 
 ---
 
-**Auto Capture CLI** - 効率的な画面キャプチャツール 🎯
+**Auto Capture CLI** - Efficient Screen Capture Tool 🎯
