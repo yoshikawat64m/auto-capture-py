@@ -14,7 +14,7 @@ if "%1"=="--venv" (
 REM 依存関係のインストール
 echo 依存関係をインストール中...
 pip install -r requirements.txt
-pip install -r build_requirements.txt
+pip install -r build_tools\build_requirements.txt
 
 REM 既存のビルドファイルをクリーンアップ
 echo 既存のビルドファイルをクリーンアップ中...
@@ -25,7 +25,9 @@ del /q *.pyc 2>nul
 
 REM PyInstallerでビルド
 echo PyInstallerでビルド中...
+cd build_tools
 pyinstaller auto-capture.spec
+cd ..
 
 REM ビルド結果の確認
 if exist "dist\auto-capture.exe" (

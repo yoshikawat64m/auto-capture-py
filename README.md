@@ -1,292 +1,192 @@
-# 画面キャプチャツール
+# Auto Capture CLI
 
-任意のウィンドウの任意の範囲を指定した間隔で画面キャプチャを行うPythonツールです。
+任意のウィンドウ画面の任意の範囲、任意の時間、任意の間隔で画面キャプチャができるPythonコマンドラインツールです。
 
-## 機能
+## 📁 プロジェクト構造
 
-- マウスクリックによるウィンドウ選択
-- マウスドラッグによる範囲選択
-- 指定したFPS（秒間フレーム数）での連続キャプチャ
-- 指定した時間での自動停止
-- JPEG形式での画像保存
-- 単一フレームキャプチャモード
-
-## インストール
-
-### 方法1: Docker環境（推奨）
-
-既存のPython環境を壊さずに実行できます。
-
-#### macOSでの事前準備
-
-1. **XQuartzをインストール**
-```bash
-# Homebrewでインストール
-brew install --cask xquartz
-
-# または公式サイトからダウンロード
-# https://www.xquartz.org/
+```
+auto-capture-py/
+├── src/                    # ソースコード
+│   ├── main.py            # メインスクリプト
+│   ├── area_selector.py   # 範囲選択GUI
+│   └── window_selector.py # ウィンドウ選択GUI
+├── docs/                  # ドキュメント
+│   ├── README.md          # このファイル
+│   ├── LOCAL_SETUP.md     # ローカル環境セットアップガイド
+│   ├── BUILD_GUIDE.md     # ビルドガイド
+│   ├── TEST_GUIDE.md      # テストガイド
+│   └── LICENSE            # ライセンス
+├── scripts/               # スクリプト
+│   ├── start_capture.sh   # Docker用起動スクリプト
+│   └── test_cli.sh        # 自動テストスクリプト
+├── build_tools/           # ビルド関連
+│   ├── build.sh           # Unix/Linux用ビルドスクリプト
+│   ├── build.bat          # Windows用ビルドスクリプト
+│   ├── auto-capture.spec  # PyInstaller設定
+│   ├── setup.py           # Python setuptools設定
+│   └── build_requirements.txt # ビルド用依存関係
+├── tests/                 # テストファイル（将来用）
+├── captures/              # キャプチャ画像保存先
+├── dist/                  # ビルド済み実行ファイル
+├── .github/workflows/     # GitHub Actions CI/CD
+├── requirements.txt       # 実行時依存関係
+├── Dockerfile            # Docker設定
+└── docker-compose.yml    # Docker Compose設定
 ```
 
-2. **XQuartzを起動して設定**
-- XQuartzを起動
-- 環境設定 → セキュリティ → "ネットワーククライアントからの接続を許可" にチェック
-- XQuartzを再起動
+## 🚀 クイックスタート
 
-3. **X11転送を許可**
+### 1. 実行ファイルを使用（推奨）
+
+最新のリリースから実行ファイルをダウンロード：
+
 ```bash
-# X11転送を許可
-xhost +localhost
+# ヘルプを表示
+./auto-capture --help
 
-# DISPLAYを設定
-export DISPLAY=:0
+# 基本的なキャプチャ（5fps、30秒間）
+./auto-capture --fps 5 --duration 30
+
+# 単一フレームキャプチャ
+./auto-capture --single
+
+# 範囲指定キャプチャ
+./auto-capture --area 100,100,800,600 --fps 2 --duration 10
 ```
 
-#### Dockerの使用方法
+### 2. Pythonスクリプトとして実行
 
 ```bash
-# Dockerイメージをビルド
-docker-compose build
+# 依存関係をインストール
+pip install -r requirements.txt
 
+# 実行
+python src/main.py --fps 5 --duration 30
+```
+
+### 3. Dockerを使用
+
+```bash
 # ヘルプを表示
 docker-compose run help
 
-# GUI無しモード（全画面キャプチャ）
-docker-compose run auto-capture python main.py --no-gui --fps 1 --duration 10 --output-prefix captures/my_capture
-
-# 範囲を直接指定してキャプチャ
-docker-compose run auto-capture python main.py --area 100,100,800,600 --fps 1 --duration 10 --output-prefix captures/my_capture
-
-# 単一フレーム（GUI無し）
-docker-compose run auto-capture python main.py --no-gui --single --output-prefix captures/screenshot
+# 単一フレームキャプチャ
+docker-compose run single-capture
 ```
 
-### 方法2: ローカル環境（実際の画面キャプチャ用）
+## 📖 詳細ドキュメント
 
-**実際の画面（ブラウザの動画など）をキャプチャする場合は、ローカル環境で実行してください。**
+- **[ローカル環境セットアップ](docs/LOCAL_SETUP.md)** - 開発環境の構築方法
+- **[ビルドガイド](docs/BUILD_GUIDE.md)** - 実行ファイルの作成方法
+- **[テストガイド](docs/TEST_GUIDE.md)** - テスト方法と品質保証
 
-#### インストール手順
+## ⚡ 主な機能
 
-**macOS:**
+- **ウィンドウ選択**: 特定のアプリケーションウィンドウを選択
+- **範囲選択**: マウスドラッグで任意の範囲を指定
+- **連続キャプチャ**: 指定したFPSで連続撮影
+- **単一フレーム**: 1枚だけのスクリーンショット
+- **クロスプラットフォーム**: Windows、macOS、Linux対応
+- **GUI/CLI両対応**: GUIモードとコマンドラインモード
+
+## 🛠️ 開発者向け
+
+### ビルド
+
 ```bash
-pip install -r requirements.txt
-# アクセシビリティ権限の設定が必要な場合があります
-# システム環境設定 → セキュリティとプライバシー → プライバシー → 画面収録
+# Unix/Linux/macOS
+./build_tools/build.sh
+
+# Windows
+build_tools\build.bat
 ```
 
-**Windows:**
+### テスト
+
 ```bash
-pip install -r requirements.txt
+# 自動テスト実行
+./scripts/test_cli.sh
+
+# 手動テスト
+python src/main.py --no-gui --single --output-prefix test
 ```
 
-**Linux:**
-```bash
-sudo apt-get update
-sudo apt-get install python3-tk x11-apps libx11-dev libxext-dev
-pip install -r requirements.txt
-```
-
-#### 実行方法
+### Docker開発環境
 
 ```bash
-# 基本的な使用方法
-python main.py
-
-# ブラウザ動画のキャプチャ例
-python main.py --fps 5 --duration 120 --output-prefix captures/youtube_video
-
-# 高頻度キャプチャ（動画用）
-python main.py --fps 10 --duration 60 --output-prefix captures/video_capture
-```
-
-詳細な手順は `LOCAL_SETUP.md` を参照してください。
-
-### 必要なライブラリ
-
-- `mss`: 高速画面キャプチャ
-- `Pillow`: 画像処理
-- `pygetwindow`: ウィンドウ情報取得
-
-## 使用方法
-
-### Docker環境での使用方法（推奨）
-
-#### 基本的な使用方法
-
-```bash
-# インタラクティブモードで起動
+# 開発用コンテナ起動
 docker-compose run auto-capture
 
-# コンテナ内でコマンド実行
-python main.py --fps 1 --duration 10 --output-prefix captures/my_capture
+# 仮想ディスプレイでテスト
+docker-compose run capture-headless
 ```
 
-#### 単一フレームキャプチャ
+## 📋 使用例
+
+### 基本的な使用方法
 
 ```bash
-# 事前定義されたサービスを使用
-docker-compose run single-capture
+# 5fps で 30秒間キャプチャ
+./auto-capture --fps 5 --duration 30
 
-# または、カスタムオプションで実行
-docker-compose run auto-capture python main.py --single --output-prefix captures/screenshot
+# 特定の範囲を 2fps で 10秒間
+./auto-capture --area 100,100,800,600 --fps 2 --duration 10
+
+# 単一フレームキャプチャ
+./auto-capture --single
+
+# GUIなしモード（全画面）
+./auto-capture --no-gui --fps 1 --duration 60
 ```
 
-#### カスタムオプションでの実行
+### 高度な使用方法
 
 ```bash
+# カスタムファイル名プレフィックス
+./auto-capture --fps 5 --duration 30 --output-prefix my_capture
+
 # 高頻度キャプチャ
-docker-compose run auto-capture python main.py --fps 5 --duration 30 --output-prefix captures/high_freq
+./auto-capture --fps 30 --duration 5
 
-# 低頻度長時間キャプチャ
-docker-compose run auto-capture python main.py --fps 0.5 --duration 120 --output-prefix captures/monitoring
+# 長時間低頻度キャプチャ
+./auto-capture --fps 0.5 --duration 3600  # 1時間、2秒に1回
 ```
 
-### ローカル環境での使用方法
+## 🔧 システム要件
 
-#### 基本的な使用方法
+- **Python**: 3.11以上
+- **OS**: Windows 10+、macOS 10.14+、Ubuntu 18.04+
+- **メモリ**: 最低512MB、推奨1GB以上
+- **ディスク**: 100MB以上の空き容量
 
-```bash
-python main.py
-```
+### 必要な権限
 
-デフォルト設定（1fps、10秒間）でキャプチャを実行します。
+- **macOS**: 画面収録権限、アクセシビリティ権限
+- **Windows**: 管理者権限（初回実行時）
+- **Linux**: X11アクセス権限
 
-#### オプション指定
+## 🤝 コントリビューション
 
-```bash
-python main.py --fps 2.0 --duration 30 --output-prefix "my_capture"
-```
+1. このリポジトリをフォーク
+2. 機能ブランチを作成 (`git checkout -b feature/amazing-feature`)
+3. 変更をコミット (`git commit -m 'Add amazing feature'`)
+4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
+5. プルリクエストを作成
 
-#### 単一フレームキャプチャ
+## 📄 ライセンス
 
-```bash
-python main.py --single --output-prefix "screenshot"
-```
+このプロジェクトはMITライセンスの下で公開されています。詳細は [LICENSE](docs/LICENSE) ファイルを参照してください。
 
-### コマンドラインオプション
+## 🐛 バグレポート・機能要望
 
-- `--fps`: キャプチャのフレームレート（秒間フレーム数、デフォルト: 1.0）
-- `--duration`: キャプチャ継続時間（秒、デフォルト: 10.0）
-- `--output-prefix`: 出力ファイル名のプレフィックス（デフォルト: "capture"）
-- `--single`: 単一フレームのみキャプチャ
+[GitHub Issues](https://github.com/your-username/auto-capture-py/issues) でバグレポートや機能要望をお寄せください。
 
-## 実行手順
+## 📞 サポート
 
-1. **ウィンドウ選択**
-   - コマンド実行後、5秒のカウントダウンが始まります
-   - カウントダウン後、キャプチャしたいウィンドウをクリックしてください
+- **ドキュメント**: [docs/](docs/) フォルダ内の各種ガイド
+- **テスト**: `./scripts/test_cli.sh` で動作確認
+- **トラブルシューティング**: [TEST_GUIDE.md](docs/TEST_GUIDE.md#トラブルシューティング)
 
-2. **範囲選択**
-   - 全画面にオーバーレイが表示されます
-   - マウスをドラッグしてキャプチャしたい範囲を選択してください
-   - ESCキーでキャンセルできます
+---
 
-3. **キャプチャ実行**
-   - 指定した設定でキャプチャが開始されます
-   - Ctrl+Cで途中停止できます
-
-## 出力ファイル
-
-キャプチャされた画像は以下の形式で保存されます：
-
-```
-{output-prefix}_{timestamp}_{frame_number}.jpg
-```
-
-例：
-- `capture_20240627_191530_0001.jpg`
-- `capture_20240627_191530_0002.jpg`
-- ...
-
-## 使用例
-
-### 例1: 高頻度キャプチャ
-```bash
-python main.py --fps 5 --duration 60 --output-prefix "high_freq"
-```
-5fps で60秒間キャプチャ（300枚の画像）
-
-### 例2: 低頻度長時間キャプチャ
-```bash
-python main.py --fps 0.5 --duration 300 --output-prefix "monitoring"
-```
-0.5fps（2秒に1回）で300秒間キャプチャ（150枚の画像）
-
-### 例3: スクリーンショット
-```bash
-python main.py --single --output-prefix "screenshot"
-```
-単一フレームのスクリーンショット
-
-## 注意事項
-
-- macOSでは、アクセシビリティ権限が必要な場合があります
-- 高いFPSでの長時間キャプチャは大量のファイルを生成します
-- キャプチャ範囲が大きいほど、処理時間とファイルサイズが増加します
-
-## トラブルシューティング
-
-### ウィンドウが選択できない場合
-- アクセシビリティ権限を確認してください
-- 他のアプリケーションが画面を占有していないか確認してください
-
-### キャプチャが開始されない場合
-- 選択した範囲が有効かどうか確認してください
-- 十分なディスク容量があることを確認してください
-
-## ビルドと配布
-
-### スタンドアロン実行ファイルの作成
-
-PyInstallerを使用してスタンドアロンの実行ファイルを作成できます。
-
-#### ビルド手順
-
-**Linux/macOS:**
-```bash
-# 基本的なビルド
-./build.sh
-
-# 仮想環境を使用してビルド（推奨）
-./build.sh --venv
-```
-
-**Windows:**
-```cmd
-REM 基本的なビルド
-build.bat
-
-REM 仮想環境を使用してビルド（推奨）
-build.bat --venv
-```
-
-#### ビルド結果
-
-ビルドが成功すると、`dist/` ディレクトリに実行ファイルが作成されます：
-- **Linux/macOS**: `dist/auto-capture`
-- **Windows**: `dist/auto-capture.exe`
-
-#### 配布
-
-作成された実行ファイルは、Pythonがインストールされていない環境でも動作します。
-
-詳細なビルド手順は `BUILD_GUIDE.md` を参照してください。
-
-### GitHub Releases
-
-タグをプッシュすると、GitHub Actionsが自動的にクロスプラットフォーム向けのビルドを実行し、リリースを作成します：
-
-```bash
-# バージョンタグを作成してプッシュ
-git tag v1.0.0
-git push origin v1.0.0
-```
-
-以下のプラットフォーム向けのビルドが自動作成されます：
-- Linux x64 (tar.gz)
-- macOS x64 (tar.gz)  
-- Windows x64 (zip)
-
-## ライセンス
-
-MIT License
+**Auto Capture CLI** - 効率的な画面キャプチャツール 🎯

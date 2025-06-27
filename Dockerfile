@@ -20,10 +20,12 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # アプリケーションファイルをコピー
-COPY . .
+COPY src/ ./src/
+COPY scripts/ ./scripts/
+COPY docs/ ./docs/
 
 # 実行権限を付与
-RUN chmod +x main.py start_capture.sh
+RUN chmod +x src/main.py scripts/start_capture.sh
 
 # デフォルトコマンド
-CMD ["python", "main.py", "--help"]
+CMD ["python", "src/main.py", "--help"]

@@ -19,7 +19,7 @@ services:
   help:
     build: .
     container_name: auto-capture-help
-    command: python main.py --help
+    command: python src/main.py --help
     
   # 単一フレームキャプチャ用サービス
   single-capture:
@@ -33,7 +33,7 @@ services:
     network_mode: host
     stdin_open: true
     tty: true
-    command: python main.py --single --output-prefix captures/screenshot
+    command: python src/main.py --single --output-prefix captures/screenshot
     
   # 仮想ディスプレイ使用サービス
   capture-headless:
@@ -43,4 +43,4 @@ services:
       - ./captures:/app/captures
     stdin_open: true
     tty: true
-    command: ./start_capture.sh --no-gui --single --output-prefix captures/headless_screenshot
+    command: scripts/start_capture.sh --no-gui --single --output-prefix captures/headless_screenshot

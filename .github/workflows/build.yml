@@ -29,7 +29,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -r build_requirements.txt
+        pip install -r build_tools/build_requirements.txt
 
     - name: Install system dependencies (Linux)
       if: runner.os == 'Linux'
@@ -39,7 +39,9 @@ jobs:
 
     - name: Build with PyInstaller
       run: |
+        cd build_tools
         pyinstaller auto-capture.spec
+        cd ..
 
     - name: Test executable (Linux/macOS)
       if: runner.os != 'Windows'

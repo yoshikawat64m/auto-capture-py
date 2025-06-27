@@ -17,7 +17,7 @@ fi
 # 依存関係のインストール
 echo "依存関係をインストール中..."
 pip install -r requirements.txt
-pip install -r build_requirements.txt
+pip install -r build_tools/build_requirements.txt
 
 # 既存のビルドファイルをクリーンアップ
 echo "既存のビルドファイルをクリーンアップ中..."
@@ -28,7 +28,9 @@ rm -rf *.pyc
 
 # PyInstallerでビルド
 echo "PyInstallerでビルド中..."
+cd build_tools
 pyinstaller auto-capture.spec
+cd ..
 
 # ビルド結果の確認
 if [ -f "dist/auto-capture" ] || [ -f "dist/auto-capture.exe" ]; then

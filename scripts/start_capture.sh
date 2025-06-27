@@ -9,7 +9,7 @@ XVFB_PID=$!
 sleep 2
 
 # 引数をそのまま渡してPythonスクリプトを実行
-python main.py "$@"
+python ../src/main.py "$@"
 
 # 終了時にXvfbを停止
 kill $XVFB_PID 2>/dev/null || true

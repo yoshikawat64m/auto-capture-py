@@ -3,12 +3,12 @@
 block_cipher = None
 
 a = Analysis(
-    ['main.py'],
+    ['../src/main.py'],
     pathex=[],
     binaries=[],
     datas=[
-        ('README.md', '.'),
-        ('LOCAL_SETUP.md', '.'),
+        ('../docs/README.md', '.'),
+        ('../docs/LOCAL_SETUP.md', '.'),
     ],
     hiddenimports=[
         'PIL._tkinter_finder',
